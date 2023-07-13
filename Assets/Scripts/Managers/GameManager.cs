@@ -8,7 +8,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     private GameState gameState;
-    [SerializeField] private ES3AutoSaveMgr es3Manager;
     [SerializeField] private int money;
     [SerializeField] private TMP_Text moneyText;
     [SerializeField] private RectTransform moneyRectTransform;
@@ -55,11 +54,13 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
+        ES3AutoSaveMgr.Current.Save();
+
+        if (gameState == GameState.Ended) { return; }
+
         gameState = GameState.Ended;
 
         OnGameEnded?.Invoke();
-
-        es3Manager.Save();
 
         Invoke(nameof(EnableUpgradeWindow), 1f);
     }
