@@ -115,6 +115,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8451187390596929279, guid: ecec29398ef6fb740a2eff428dae4dcd,
         type: 3}
+      propertyPath: maxCoinDropAmount
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 8451187390596929279, guid: ecec29398ef6fb740a2eff428dae4dcd,
+        type: 3}
       propertyPath: powerupDropChance
       value: 44
       objectReference: {fileID: 0}

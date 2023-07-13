@@ -1,3 +1,4 @@
+using EZCameraShake;
 using UnityEngine;
 
 public class Cannon : MonoBehaviour
@@ -31,6 +32,8 @@ public class Cannon : MonoBehaviour
         body.SetActive(false);
         
         wreckedBody.SetActive(true);
+
+        CameraShaker.Instance.ShakeOnce(1f, 6f, .1f, .5f);
 
         GameManager.Instance.EndGame();
 

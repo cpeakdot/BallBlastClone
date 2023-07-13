@@ -6,14 +6,17 @@ public class CannonFire : MonoBehaviour
 {
     [SerializeField] private cPool pool;
     [SerializeField] private Health health;
+    [SerializeField] private FasterShooting fasterShooting;
+    [SerializeField] private WiderShooting widerShooting;
     [SerializeField] private string bulletPoolTag = "Bullet";
     [SerializeField] private Transform bulletSpawnPoint;
-    [SerializeField] private float fireRate = 1f;
+    [SerializeField] private float initialFireRate = 1f;
+    private float fireRate = 1f;
     private float lastFireTime;
 
     [Header("Wider Shooting Settings")]
-    private bool disperseBullets = false;
-    [SerializeField] private int disperseBulletAmount = 3;
+    [SerializeField] private int initialDisperseBulletAmount = 1;
+    private int disperseBulletAmount = 1;
     [SerializeField] private float disperseDuration = .1f;
 
     public float GetFireRate => fireRate;
@@ -22,6 +25,19 @@ public class CannonFire : MonoBehaviour
     private void Awake() 
     {
         health.OnDie.AddListener(HandleOnDie);
+    }
+
+    private void Start() 
+    {
+        AttributeManager.OnUpgrade += HandleOnUpgrade;
+
+        initialFireRate += AttributeManager.Instance.GetShootingRateUpgradedAmount();
+
+        initialDisperseBulletAmount += AttributeManager.Instance.GetWiderShootingCountUpgradedAmount();
+
+        fireRate = initialFireRate;
+
+        disperseBulletAmount = initialDisperseBulletAmount;
     }
 
     private void Update() 
@@ -35,36 +51,23 @@ public class CannonFire : MonoBehaviour
 
     private void Fire()
     {
-        if(!disperseBullets)
+        float distanceBtwBullets = .5f;
+
+        Vector3 centerPosition = bulletSpawnPoint.position;
+
+        float totalWidth = (disperseBulletAmount - 1) * distanceBtwBullets;
+        
+        float startPosition = centerPosition.x - totalWidth / 2f;
+
+        for (int i = 0; i < disperseBulletAmount; i++)
         {
-            pool.GetPoolObject(bulletPoolTag, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-        }
-        else
-        {
-            float distanceBtwBullets = .5f;
-            int sideBullets = disperseBulletAmount / 2;
+            GameObject bulletInstance = pool.GetPoolObject(bulletPoolTag, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
 
-            if(disperseBulletAmount % 2 != 0)
-            {
-                GameObject bulletInstance = pool.GetPoolObject(bulletPoolTag, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-            }
+            float offsetX = i * distanceBtwBullets;
 
-            /// Left side bullets
-            for (int i = 0; i < sideBullets; i++)
-            {
-                GameObject bulletInstance = pool.GetPoolObject(bulletPoolTag, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+            float moveToXPosition = startPosition + offsetX;
 
-                bulletInstance.transform.DOMoveX(distanceBtwBullets * (i + 1) * -1f, disperseDuration).SetRelative();
-            }
-
-            /// Right side bullets
-            for (int i = 0; i < sideBullets; i++)
-            {
-                GameObject bulletInstance = pool.GetPoolObject(bulletPoolTag, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-
-                bulletInstance.transform.DOMoveX(distanceBtwBullets * (i + 1) , disperseDuration).SetRelative();
-            }
-            
+            bulletInstance.transform.DOMoveX(moveToXPosition, disperseDuration);
         }
     }
 
@@ -73,8 +76,44 @@ public class CannonFire : MonoBehaviour
         this.enabled = false;
     }
 
-    public void SetWiderShootingState(bool isActive)
+    public void SetWiderShootingBulletAmount(int bulletAmount)
     {
-        disperseBullets = isActive;
+        this.disperseBulletAmount = bulletAmount;
+    }
+
+    public int GetWiderShootingBulletAmount()
+    {
+        return initialDisperseBulletAmount;
+    }
+
+    private void HandleOnUpgrade(UpgradeType upgradeType)
+    {
+        if(upgradeType == UpgradeType.FasterShooting)
+        {
+            initialFireRate += AttributeManager.Instance.GetShootingRateUpgradedAmount();
+
+            if(!fasterShooting.IsFasterShootingActive)
+            {
+                fireRate = initialFireRate;
+            }
+            else
+            {
+                fasterShooting.SetInitialFireRate = initialFireRate;
+            }
+        }
+        else if(upgradeType == UpgradeType.WiderShooting)
+        {
+            initialDisperseBulletAmount += AttributeManager.Instance.GetWiderShootingCountUpgradedAmount();
+
+            if(!widerShooting.IsWiderShootingActive)
+            {
+                disperseBulletAmount = initialDisperseBulletAmount;
+            }
+            else
+            {
+                widerShooting.SetInitialBulletAmount = initialDisperseBulletAmount;
+                disperseBulletAmount++;
+            }
+        }
     }
 }

@@ -13,9 +13,14 @@ public class Invincibility : CannonPowerBase
     public override void InitPower()
     {
         timer = 0f;
+        
         isInvincibilityActive = true;
+
         invincibilityVisual.SetActive(true);
+
         health.SetCanBeDamaged(false);
+
+        ActivatePowerupVisual();
     }
 
     private void Update() 
@@ -31,5 +36,10 @@ public class Invincibility : CannonPowerBase
             timer = 0f;
             invincibilityVisual.SetActive(false);
         }
+    }
+
+    public override void ActivatePowerupVisual()
+    {
+        GameManager.Instance.ActivatePowerupVisual(powerUpType, lifeTime);
     }
 }

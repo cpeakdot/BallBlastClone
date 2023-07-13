@@ -6,8 +6,10 @@ public class CannonMovement : MonoBehaviour
     [Header("Refs")]
     [SerializeField] private SwerveInput swerveInput;
     [SerializeField] private Health health;
+
     [Header("Values")]
     [SerializeField] private float swerveSpeed = 1f;
+    [SerializeField] private float maxXPos = 4.5f;
 
     public float GetSwerveSpeed => swerveSpeed;
 
@@ -18,7 +20,12 @@ public class CannonMovement : MonoBehaviour
 
     private void Update() 
     {
-        transform.position += (Vector3.right * swerveInput.changeOnX) * (swerveSpeed * Time.deltaTime);
+        float targetX = Mathf.Clamp(
+            transform.position.x + swerveInput.changeOnX * (swerveSpeed * Time.deltaTime)
+            , -maxXPos
+            , maxXPos);
+
+        transform.position = new Vector3(targetX, transform.position.y, transform.position.z);
     }
 
     public void SetSwerveSpeed(float swerveSpeed)

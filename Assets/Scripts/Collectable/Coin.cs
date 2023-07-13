@@ -11,14 +11,28 @@ public class Coin : MonoBehaviour
     {
         canBeCollected = true;
     }
+
+    [ContextMenu("Test Collect")]
     public void Collect()
     {
         if (!canBeCollected) { return; }
 
         canBeCollected = false;
 
-        Debug.Log("Coin collected");
+        RectTransform moneyTextRectTransform = GameManager.GetMoneyRectTransform;
 
-        cPool.instance.ReleaseObject(poolTag, this.gameObject);
+        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(moneyTextRectTransform.transform.position);
+
+        worldPosition.z = transform.position.z;
+
+        float moveDuration = 1f;
+
+        transform.DOMove(worldPosition, moveDuration)
+        .OnComplete(() =>
+        {
+            GameManager.Instance.AddMoney(1);
+            cPool.instance.ReleaseObject(poolTag, this.gameObject);
+        })
+        .SetEase(Ease.InOutCubic);
     }
 }

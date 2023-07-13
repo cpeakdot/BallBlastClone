@@ -9,6 +9,9 @@ public class FasterShooting : CannonPowerBase
     private float timer = 0f;
     private bool isFasterShootingActive = false;
 
+    public bool IsFasterShootingActive => isFasterShootingActive;
+    public float SetInitialFireRate {set { initialFireRate = value; } }
+
     [ContextMenu("Test Faster Shooting")]
     public override void InitPower()
     {
@@ -21,6 +24,8 @@ public class FasterShooting : CannonPowerBase
         initialFireRate = cannonFire.GetFireRate;
 
         cannonFire.SetFireRate = initialFireRate * fireRateMultiplier;
+
+        ActivatePowerupVisual();
     }
 
     private void Update() 
@@ -35,5 +40,10 @@ public class FasterShooting : CannonPowerBase
 
             cannonFire.SetFireRate = initialFireRate;
         }
+    }
+
+    public override void ActivatePowerupVisual()
+    {
+        GameManager.Instance.ActivatePowerupVisual(powerUpType, lifeTime);
     }
 }

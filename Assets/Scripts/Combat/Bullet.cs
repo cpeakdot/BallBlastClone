@@ -5,13 +5,18 @@ public class Bullet : MonoBehaviour
 {
     [SerializeField] private float travelSpeed = 3f;
     [SerializeField] private float lifeTime = 4f;
-    [SerializeField] private int damageToDeal = 1;
+    private int initialDamageToDeal = 1;
+    private int damageToDeal;
     [SerializeField] private string itemTagOnPool = "Bullet";
     [SerializeField] private string hitParticlePoolTag = "HitParticle";
     private float timer = 0f;
 
     private void OnEnable() 
     {
+        initialDamageToDeal = 1 + AttributeManager.Instance.GetFirePowerUpgradedAmount();
+
+        damageToDeal = initialDamageToDeal;
+
         timer = 0f;
     }
 

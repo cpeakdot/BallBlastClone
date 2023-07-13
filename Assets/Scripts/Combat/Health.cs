@@ -11,6 +11,8 @@ public class Health : MonoBehaviour
     private int currentHealth;
     private bool canBeDamaged = true;
 
+    public bool IsHelperCannon {set { canBeDamaged = !value; } }
+
     private void OnEnable() 
     {
         currentHealth = health;
@@ -29,6 +31,7 @@ public class Health : MonoBehaviour
         if(currentHealth == 0)
         {
             OnDie?.Invoke();
+            this.enabled = false;
         }
     }
 

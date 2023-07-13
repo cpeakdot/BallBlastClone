@@ -18,6 +18,7 @@ public class BoulderSpawner : MonoBehaviour
     private float boulderSpawnTime;
     private float lastBoulderSpawnTime;
     private bool boulderSpawnOnProgress = true;
+    private bool spawnBoulderImmadiate = false;
     private WaitForSeconds boulderMoveInGameCoroutineDuration;
     private List<Boulder> spawnableBoulders = new List<Boulder>();
     private List<Boulder> activeBouldersInTheScene = new List<Boulder>();
@@ -53,8 +54,10 @@ public class BoulderSpawner : MonoBehaviour
             boulderSpawnOnProgress = true;
             boulderSpawnTime = UnityEngine.Random.Range(minSpawnBoulderIteration, maxSpawnBoulderIteration);
         }
-        if(Time.time > lastBoulderSpawnTime + boulderSpawnTime)
+        if(Time.time > lastBoulderSpawnTime + boulderSpawnTime || spawnBoulderImmadiate)
         {
+            spawnBoulderImmadiate = false;
+
             SpawnBoulder();
 
             boulderSpawnOnProgress = false;
@@ -134,7 +137,7 @@ public class BoulderSpawner : MonoBehaviour
         // If no boudler is active in the scene. Create a new one.
         if(activeBouldersInTheScene.Count == 0)
         {
-            lastBoulderSpawnTime = 0f;
+            spawnBoulderImmadiate = true;
         }
 
         for (int i = 0; i < boulders.Length; i++)

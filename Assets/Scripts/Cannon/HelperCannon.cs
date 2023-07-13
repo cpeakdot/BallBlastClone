@@ -1,6 +1,7 @@
 using UnityEngine;
 
 public class HelperCannon : CannonPowerBase
+
 {
     [SerializeField] private float lifeTime = 10f;
     [SerializeField] private Material helperCannonBodyMat;
@@ -11,6 +12,8 @@ public class HelperCannon : CannonPowerBase
     [ContextMenu("Init Helper Cannon")]
     public override void InitPower()
     {
+        if (helperCannonActive) { return; }
+        
         Vector3 spawnPosition = transform.position;
         spawnPosition.x *= -1f;
 
@@ -18,15 +21,19 @@ public class HelperCannon : CannonPowerBase
 
         CannonMovement helperCannonMovement = cannonInstance.GetComponent<CannonMovement>();
         Cannon helperCannon = cannonInstance.GetComponent<Cannon>();
+        Health helperCannonHealth = helperCannon.GetHealth;
 
         helperCannonMovement.SetSwerveSpeed(helperCannonMovement.GetSwerveSpeed * -1f);
         helperCannon.SetWheelRotationSpeed(helperCannon.GetWheelRotationSpeed * -1f);
+        helperCannonHealth.IsHelperCannon = true;
 
         MeshRenderer helperCannonMR = helperCannon.GetBodyOBJ.GetComponent<MeshRenderer>();
         helperCannonMR.sharedMaterial = helperCannonBodyMat;
 
         timer = 0f;
         helperCannonActive = true;
+
+        ActivatePowerupVisual();
     }
 
     private void Update() 
@@ -40,5 +47,10 @@ public class HelperCannon : CannonPowerBase
 
         helperCannonActive = false;
         Destroy(cannonInstance);
+    }
+
+    public override void ActivatePowerupVisual()
+    {
+        GameManager.Instance.ActivatePowerupVisual(powerUpType, lifeTime);
     }
 }

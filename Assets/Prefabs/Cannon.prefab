@@ -605,10 +605,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pool: {fileID: 0}
   health: {fileID: 3416889597552472979}
+  fasterShooting: {fileID: 4409205194306517417}
+  widerShooting: {fileID: 4150336307608246070}
   bulletPoolTag: Bullet
   bulletSpawnPoint: {fileID: 4851873828789377519}
-  fireRate: 10
-  disperseBulletAmount: 3
+  initialFireRate: 5
+  initialDisperseBulletAmount: 1
   disperseDuration: 0.3
 --- !u!114 &1799856873
 MonoBehaviour:
