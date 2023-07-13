@@ -8,16 +8,25 @@ public class Health : MonoBehaviour
     [SerializeField] private TMP_Text healthText;
     public UnityEvent OnDie;
     public UnityEvent<int> OnHealthUpdate;
+    private int currentHealth;
+    private bool canBeDamaged = true;
+
+    private void OnEnable() 
+    {
+        currentHealth = health;
+    }
 
     public void Damage(int amount)
     {
-        health = Mathf.Max(0, health - amount);
+        if (!canBeDamaged) { return; }
 
-        OnHealthUpdate?.Invoke(health);
+        currentHealth = Mathf.Max(0, currentHealth - amount);
+
+        OnHealthUpdate?.Invoke(currentHealth);
 
         UpdateHealthText();
 
-        if(health == 0)
+        if(currentHealth == 0)
         {
             OnDie?.Invoke();
         }
@@ -26,6 +35,11 @@ public class Health : MonoBehaviour
     private void UpdateHealthText()
     {
         if (!healthText) { return; }
-        healthText.text = health.ToString();
+        healthText.text = currentHealth.ToString();
+    }
+
+    public void SetCanBeDamaged(bool canBeDamaged)
+    {
+        this.canBeDamaged = canBeDamaged;
     }
 }

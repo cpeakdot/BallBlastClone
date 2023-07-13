@@ -8,6 +8,8 @@ TagManager:
   - Ground
   - Wall
   - Cannon
+  - Coin
+  - Powerup
   layers:
   - Default
   - TransparentFX
@@ -15,7 +17,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Cannon
   - 
   - 
   - 
